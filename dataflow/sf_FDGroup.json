@@ -21,8 +21,12 @@
 					"name": "sink1"
 				}
 			],
-			"transformations": [],
-			"script": "source(output(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table') ~> dfFDGroup\ndfFDGroup sink(input(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true) ~> sink1"
+			"transformations": [
+				{
+					"name": "Concat"
+				}
+			],
+			"script": "source(output(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table') ~> dfFDGroup\ndfFDGroup derive(column1 = concat(PRODUCT_NAMES,'ADF')) ~> Concat\nConcat sink(input(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tPRODUCT_ID,\n\t\tPRODUCT_NAMES = column1\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true) ~> sink1"
 		}
 	}
 }
