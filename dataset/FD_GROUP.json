@@ -1,0 +1,32 @@
+{
+	"name": "FD_GROUP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_Snowflake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ds_Snowflake"
+		},
+		"annotations": [],
+		"type": "SnowflakeTable",
+		"schema": [
+			{
+				"name": "PRODUCT_ID",
+				"type": "VARCHAR",
+				"precision": 6,
+				"scale": 0
+			},
+			{
+				"name": "PRODUCT_NAMES",
+				"type": "VARCHAR",
+				"precision": 100,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "BI",
+			"table": "FD_GROUP_TRANS"
+		}
+	}
+}
