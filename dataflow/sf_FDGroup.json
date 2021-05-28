@@ -1,0 +1,20 @@
+{
+	"name": "sf_FDGroup",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "FD_GROUP",
+						"type": "DatasetReference"
+					},
+					"name": "dfFDGroup"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"script": "source(output(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table') ~> dfFDGroup"
+		}
+	}
+}
