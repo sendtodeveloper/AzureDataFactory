@@ -1,0 +1,9 @@
+{
+	"name": "SnowflakeDFTraining",
+	"location": "southcentralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ceddc702-6c5b-4fec-8ca5-76d73ee2b17c",
+		"tenantId": "66c5dafe-df92-45b2-80bc-f5d4b1f1e721"
+	}
+}
