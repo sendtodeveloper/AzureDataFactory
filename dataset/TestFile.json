@@ -1,0 +1,30 @@
+{
+	"name": "TestFile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_SnowBlob",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ds_Snowflake/BlobStorage"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "TestFile.txt",
+				"folderPath": "Input Files",
+				"container": "snowfiles"
+			},
+			"columnDelimiter": "^",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	}
+}
