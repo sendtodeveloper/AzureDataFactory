@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "SnowflakeDFTraining"
 		},
+		"ls_SnowBlob_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_SnowBlob'"
+		},
 		"ls_Snowflake_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_Snowflake'"
@@ -37,6 +41,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"ls_SnowBlob_connectionString": {
+						"value": "[parameters('ls_SnowBlob_connectionString')]"
 					},
 					"ls_Snowflake_connectionString": {
 						"value": "[parameters('ls_Snowflake_connectionString')]"

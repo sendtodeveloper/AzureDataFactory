@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "SnowflakeDFTraining"
 		},
+		"ls_SnowBlob_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_SnowBlob'"
+		},
 		"ls_Snowflake_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_Snowflake'"
@@ -16,94 +20,6 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/ls_Snowflake')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "this is a connection for Snowflake",
-				"annotations": [],
-				"type": "Snowflake",
-				"typeProperties": {
-					"connectionString": "[parameters('ls_Snowflake_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/FD_GROUP')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_Snowflake",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "ds_Snowflake"
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [
-					{
-						"name": "PRODUCT_ID",
-						"type": "VARCHAR",
-						"precision": 6,
-						"scale": 0
-					},
-					{
-						"name": "PRODUCT_NAMES",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "BI",
-					"table": "FD_GROUP_TRANS"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_Snowflake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/sf_FDGroup')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "FD_GROUP",
-								"type": "DatasetReference"
-							},
-							"name": "dfFDGroup"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "FD_GROUP",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Concat"
-						}
-					],
-					"script": "source(output(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table') ~> dfFDGroup\ndfFDGroup derive(column1 = concat(PRODUCT_NAMES,'ADF')) ~> Concat\nConcat sink(input(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tPRODUCT_ID,\n\t\tPRODUCT_NAMES = column1\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true) ~> sink1"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/FD_GROUP')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/p_FDGroup')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -145,6 +61,108 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/sf_FDGroup')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FD_GROUP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_Snowflake",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ds_Snowflake"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [
+					{
+						"name": "PRODUCT_ID",
+						"type": "VARCHAR",
+						"precision": 6,
+						"scale": 0
+					},
+					{
+						"name": "PRODUCT_NAMES",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "BI",
+					"table": "FD_GROUP_TRANS"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_Snowflake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_SnowBlob')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Link Server of Blob Storage.",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_SnowBlob_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_Snowflake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "this is a connection for Snowflake",
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_Snowflake_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sf_FDGroup')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "FD_GROUP",
+								"type": "DatasetReference"
+							},
+							"name": "dfFDGroup"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "FD_GROUP",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Concat"
+						}
+					],
+					"script": "source(output(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table') ~> dfFDGroup\ndfFDGroup derive(column1 = concat(PRODUCT_NAMES,'ADF')) ~> Concat\nConcat sink(input(\n\t\tPRODUCT_ID as string,\n\t\tPRODUCT_NAMES as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tPRODUCT_ID,\n\t\tPRODUCT_NAMES = column1\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true) ~> sink1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/FD_GROUP')]"
 			]
 		}
 	]

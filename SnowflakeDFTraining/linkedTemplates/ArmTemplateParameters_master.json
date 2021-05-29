@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "SnowflakeDFTraining"
 		},
+		"ls_SnowBlob_connectionString": {
+			"value": ""
+		},
 		"ls_Snowflake_connectionString": {
 			"value": ""
 		},
